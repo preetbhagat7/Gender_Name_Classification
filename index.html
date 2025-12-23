@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pro Indian Gender Predictor</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); width: 400px; text-align: center; }
+        input { width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 18px; box-sizing: border-box; margin-bottom: 20px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #007bff; }
+        .res { padding: 20px; border-radius: 8px; font-weight: bold; display: none; }
+        .male { background: #e7f3ff; color: #0056b3; border: 1px solid #b3d7ff; }
+        .female { background: #fff0f5; color: #d63384; border: 1px solid #ffc2d1; }
+        small { display: block; margin-top: 10px; color: #666; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Gender Predictor</h2>
+    <input type="text" id="nameIn" placeholder="Try: Mr. Mohit Kumar">
+    <div id="out" class="res"></div>
+</div>
+
+<script src="script.js"></script>
+<script>
+    let engine;
+    // Load your JSON file
+    fetch('name_gender.json')
+        .then(r => r.json())
+        .then(data => {
+            engine = new GenderPredictor(data);
+            console.log("Ready!");
+        });
+
+    document.getElementById('nameIn').addEventListener('input', (e) => {
+        const result = engine.predict(e.target.value);
+        const outDiv = document.getElementById('out');
+        
+        if (e.target.value.length < 2) {
+            outDiv.style.display = 'none';
+            return;
+        }
+
+        outDiv.style.display = 'block';
+        outDiv.className = `res ${result.gender}`;
+        outDiv.innerHTML = `Predicted: ${result.gender.toUpperCase()} <br> 
+                           <small>Reason: ${result.reasons[0]}</small>`;
+    });
+</script>
+</body>
+</html>
